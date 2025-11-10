@@ -254,10 +254,8 @@ export function publicoContenido() {
 // TEMAS DEL CODIGO  
 const wiTema = (() => {
  const tms = [["Cielo","#0EBEFF"],["Dulce","#FF5C69"],["Paz","#29C72E"],["Mora","#7000FF"],["Futuro","#21273B"]], 
- set = el => {const [nm,co] = $(el).data('tema').split('|'); $('html').attr('data-theme',nm); 
- $('meta[name="theme-color"]').length ? $('meta[name="theme-color"]').attr('content',co) : $('<meta>',{name:'theme-color',content:co}).appendTo('head');
- savels('witema',`${nm}|${co}`,720); $('.mtha').removeClass('mtha'); $(el).addClass('mtha');},
- init = () => {$('.witemas').html(tms.map(([n,c]) => `<div class="tema" data-tema="${n}|${c}" style="background:${c}"></div>`).join('')); const sav = getls('witema'), ini = $(`[data-tema="${sav}"]`)[0] || $('.mtha')[0] || $('[data-tema]').first()[0]; ini && set(ini); $(document).off('click.witema').on('click.witema', '[data-tema]', e => set(e.currentTarget));};
- $('.witemas').length ? init() : new MutationObserver(m => m.some(({addedNodes}) => [...addedNodes].some(n => n.querySelector?.('.witemas'))) && (init(), true)).observe(document.body, {childList: true, subtree: true});
+ set = elm => {const [nom,col] = $(elm).data('tema').split('|'); $('html').attr('data-theme',nom); ($('meta[name="theme-color"]')[0] || $('<meta name="theme-color">').appendTo('head')[0]).content = col; savels('wiTema',`${nom}|${col}`,720); $('.mtha').removeClass('mtha'); $(elm).addClass('mtha');},
+ ini = () => {$('.witemas').html(tms.map(([nom,col]) => `<div class="tema" data-tema="${nom}|${col}" style="background:${col}"></div>`).join('')); const sav = getls('wiTema'), ele = $(`[data-tema="${sav}"]`)[0] || $('.tema').first()[0]; ele && set(ele); $(document).off('click.witema').on('click.witema', '.tema', e => set(e.currentTarget));};
+ $('.witemas').length ? ini() : new MutationObserver(mut => mut.some(({addedNodes:nod}) => [...nod].some(ele => ele.querySelector?.('.witemas'))) && (ini(), true)).observe(document.body, {childList:1, subtree:1});
  return {set};
 })();

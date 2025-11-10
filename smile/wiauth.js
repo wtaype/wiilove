@@ -263,32 +263,26 @@ $('#Registrar').click(async function(){
     Mensaje('Registro completado! ✅');
 
   }catch(e){Mensaje({'auth/email-already-in-use': 'Email ya registrado', 'auth/weak-password': 'Contraseña muy débil'}[e.code] || e.message) || console.error(e);}
-  finally{savels(wiAuthIn,'wIn',24); savels(wiAuthRol,rol,24);}
+  finally{savels(wiAuthIn,'wIn',24); savels(wiAuthRol,rol,24); CloseAuthM('registroModal')}
 });
 
 // LOGIN CENTER APP 
 $('#Login').click(async function() {
   try {
     const [usuario, password] = ['#email', '#password'].map(id => $(id).val());
+    const esEmail = usuario.includes('@');
+    const busq = !esEmail ? await getDoc(doc(db, midb, usuario)) : null;
+    if (!esEmail && !busq.exists()) throw new Error('Usuario no encontrado');
+    const email = esEmail ? usuario : busq.data().email;
+    await signInWithEmailAndPassword(auth, email, password);
     
-    let busq = null;
-    let email = usuario; //Para ingresar con usuario, actualizando a email 
-    if (!usuario.includes('@')){
-      try{
-        busq = await getDoc(doc(db, midb, usuario));
-        email = busq.exists() ? busq.data().email : null;
-      }catch(e){console.error('ebdUsuario', e); email = null;}
-    } // Convertir usuario a email si es necesario
-
-    await signInWithEmailAndPassword(auth, email, password); // Iniciando
-    savels(wiAuthIn,'wIn',24); savels(wiAuthRol, busq.data().rol, 24); CloseAuthM('loginModal');
-  }catch(e){
-    const errores = {
-      'auth/invalid-credential': 'Contraseña incorrecta',
-      'auth/invalid-email': 'Falta registrar Email',
-      'auth/missing-email': 'Email o usuario no registrado'
-    }; Mensaje(errores[e.code] || e.message, 'error'); console.error(e);   
-  }
+    const tema = !esEmail ? (await getDoc(doc(db, 'preferencias', usuario)))?.data()?.wiTema : null;
+    savels(wiAuthIn,'wIn',24); 
+    if(tema) savels('wiTema', tema, 72);
+  } catch(e) {
+    const err = {'auth/invalid-credential':'Contraseña incorrecta','auth/invalid-email':'Falta registrar Email','auth/missing-email':'Email o usuario no registrado'};
+    Mensaje(err[e.code] || e.message, 'error'); console.error(e);
+  } finally {CloseAuthM('loginModal'); location.reload()}
 });
 
 // RECUPERAR CENTER APP 

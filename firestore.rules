@@ -11,11 +11,11 @@ service cloud.firestore {
       allow read: if true; 
       allow write: if true; 
     } // Consulta para validar, crear, eliminar publico.Actualizar solo Autenticados
-         
-    match /publico/{document} {
-      allow read: if true;
+
+    match /preferencias/{document} {
+      allow read: if true; 
       allow write: if true; 
-    } // Acceso lectura general 
+    } // Consulta para validar, crear, eliminar publico.Actualizar solo Autenticados
     
   }
 }

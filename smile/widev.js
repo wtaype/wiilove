@@ -1,6 +1,32 @@
 import $ from 'jquery'; 
-import { doc, setDoc, getDoc, serverTimestamp, Timestamp} from 'firebase/firestore';
+import { collection, query, where, getDocs, setDoc, doc, serverTimestamp } from 'firebase/firestore';
 
+export function wiTema(db, u) {
+  const id = u?.displayName || u?.email || u?.uid;
+  if (!db || !id) return;
+
+  const T = [["Cielo","#0EBEFF"],["Dulce","#FF5C69"],["Paz","#29C72E"],["Mora","#7000FF"],["Futuro","#21273B"]];
+  $('.witemas').html(T.map(([n,c]) => `<div class="tema" data-tema="${n}|${c}" style="background:${c}"></div>`).join(''));
+
+  const init = $(`.tema[data-tema="${getls('wiTema')}"]`)[0] || $('.tema').first()[0];
+  if (init) {
+    const [n,c] = $(init).data('tema').split('|');
+    $('html').attr('data-theme', n);
+    ($('meta[name="theme-color"]')[0] || $('<meta name="theme-color">').appendTo('head')[0]).content = c;
+    $(init).addClass('mtha');
+  }
+
+  $(document).on('click', '.tema', async function() {
+    const [n,c] = $(this).data('tema').split('|');
+    $('html').attr('data-theme', n);
+    ($('meta[name="theme-color"]')[0] || $('<meta name="theme-color">').appendTo('head')[0]).content = c;
+    savels('wiTema', `${n}|${c}`, 720);
+    $('.mtha').removeClass('mtha');
+    $(this).addClass('mtha');
+    await setDoc(doc(db, 'preferencias', id), { usuario: id, email: u.email || '', wiTema: `${n}|${c}`, actualizado: serverTimestamp() }, { merge: true });
+    Mensaje(`Tema ${n} guardado ✅`);
+  });
+}
 // ==============================
 // 🔥 FECHA CON HORA ACTUAL PARA FIRESTORE
 // ==============================
@@ -17,54 +43,6 @@ export const getbd = (timestamp) => {
   return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
 };
  
-
-export const wiTema = (() => {
-  const tonos = [["Cielo","#0EBEFF"],["Dulce","#FF5C69"],["Paz","#29C72E"],["Mora","#7000FF"],["Futuro","#21273B"]];
-  let espera, temaSel;
-
-  const aplica = el => {
-    const dato = $(el).data('tema');
-    if (!dato) return false;
-    const [nomb, color] = dato.split('|');
-    if (!nomb || !color) return false;
-    $('html').attr('data-theme', nomb);
-    const meta = $('meta[name="theme-color"]');
-    meta.length ? meta.attr('content', color) : $('<meta>', { name: 'theme-color', content: color }).appendTo('head');
-    savels('wiTema', dato, 720);
-    $('.mtha').removeClass('mtha');
-    $(el).addClass('mtha');
-    temaSel = dato;
-    return true;
-  };
-
-  const guarda = async (db, usr) => {
-    if (!db || !usr?.displayName || !temaSel) return;
-    try {
-      await setDoc(doc(db, 'preferencias', usr.displayName), {
-        usuario: usr.displayName,
-        email: usr.email,
-        wiTema: temaSel,
-        fechaActualizacion: serverTimestamp()
-      }, { merge: true });
-      const [nomb] = temaSel.split('|');
-      Mensaje(`Tema ${nomb} guardado 🎨`);
-    } catch (err) {
-      console.error('❌ Error guardando tema:', err);
-    }
-  };
-
-  return (db, usr) => {
-    $('.witemas').html(tonos.map(([nomb, color]) => `<div class="tema" data-tema="${nomb}|${color}" style="background:${color}"></div>`).join(''));
-    const guardado = getls('wiTema');
-    const inicio = $(`[data-tema="${guardado}"]`)[0] || $('.mtha')[0] || $('[data-tema]').first()[0];
-    inicio && aplica(inicio);
-    $(document).off('click.witema').on('click.witema', '[data-tema]', e => {
-      if (!aplica(e.currentTarget) || !db || !usr?.displayName) return;
-      clearTimeout(espera);
-      espera = setTimeout(() => guarda(db, usr), 50); //Para guardar el tema segundos
-    });
-  };
-})();
 
 
 // ==============================
