@@ -7,6 +7,11 @@ service cloud.firestore {
       allow read, write: if request.auth != null; 
     } //General y todas bds con Auth
     
+    match /festividades/{document} {
+      allow read: if true;
+      allow write: if true; 
+    } // Acceso lectura general  
+    
     match /smiles/{document} {
       allow read: if true; 
       allow write: if true; 

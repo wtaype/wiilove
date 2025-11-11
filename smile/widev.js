@@ -1,32 +1,13 @@
 import $ from 'jquery'; 
 import { collection, query, where, getDocs, setDoc, doc, serverTimestamp } from 'firebase/firestore';
 
-export function wiTema(db, u) {
-  const id = u?.displayName || u?.email || u?.uid;
-  if (!db || !id) return;
-
-  const T = [["Cielo","#0EBEFF"],["Dulce","#FF5C69"],["Paz","#29C72E"],["Mora","#7000FF"],["Futuro","#21273B"]];
-  $('.witemas').html(T.map(([n,c]) => `<div class="tema" data-tema="${n}|${c}" style="background:${c}"></div>`).join(''));
-
-  const init = $(`.tema[data-tema="${getls('wiTema')}"]`)[0] || $('.tema').first()[0];
-  if (init) {
-    const [n,c] = $(init).data('tema').split('|');
-    $('html').attr('data-theme', n);
-    ($('meta[name="theme-color"]')[0] || $('<meta name="theme-color">').appendTo('head')[0]).content = c;
-    $(init).addClass('mtha');
-  }
-
-  $(document).on('click', '.tema', async function() {
-    const [n,c] = $(this).data('tema').split('|');
-    $('html').attr('data-theme', n);
-    ($('meta[name="theme-color"]')[0] || $('<meta name="theme-color">').appendTo('head')[0]).content = c;
-    savels('wiTema', `${n}|${c}`, 720);
-    $('.mtha').removeClass('mtha');
-    $(this).addClass('mtha');
-    await setDoc(doc(db, 'preferencias', id), { usuario: id, email: u.email || '', wiTema: `${n}|${c}`, actualizado: serverTimestamp() }, { merge: true });
-    Mensaje(`Tema ${n} guardado ✅`);
-  });
-}
+export const wiTema = (() => {
+ const tms = [["Cielo","#0EBEFF"],["Dulce","#FF5C69"],["Paz","#29C72E"],["Mora","#7000FF"],["Futuro","#21273B"]], 
+ set = elm => {const [nom,col] = $(elm).data('tema').split('|'); $('html').attr('data-theme',nom); ($('meta[name="theme-color"]')[0] || $('<meta name="theme-color">').appendTo('head')[0]).content = col; savels('wiTema',`${nom}|${col}`,720); $('.mtha').removeClass('mtha'); $(elm).addClass('mtha');},
+ ini = () => {$('.witemas').html(tms.map(([nom,col]) => `<div class="tema" data-tema="${nom}|${col}" style="background:${col}"></div>`).join('')); const sav = getls('wiTema'), ele = $(`[data-tema="${sav}"]`)[0] || $('.tema').first()[0]; ele && set(ele); $(document).off('click.witema').on('click.witema', '.tema', e => set(e.currentTarget));};
+ $('.witemas').length ? ini() : new MutationObserver(mut => mut.some(({addedNodes:nod}) => [...nod].some(ele => ele.querySelector?.('.witemas'))) && (ini(), true)).observe(document.body, {childList:1, subtree:1});
+ return {set};
+})();
 // ==============================
 // 🔥 FECHA CON HORA ACTUAL PARA FIRESTORE
 // ==============================
@@ -89,9 +70,10 @@ export const Saludar = () => {
 
 
 export const accederRol = (rol) => {
-  const to = rol === 'smiletop' ? 'smiletop.html' : 'smile.html';
-  window.location.href = new URL(to, window.location.href).toString();
+  const rut = rol === 'smiletop' ? 'smiletop.html' : rol === 'smile' ? 'smile.html' : '/';
+  window.location.href = new URL(rut, window.location.href).toString();
 }; 
+
 
 // RIGHT NOTIFICATIONS WITH X 
 export function Notificacion(mensaje, tipo = 'error', tiempo= 3000) {

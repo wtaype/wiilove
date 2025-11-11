@@ -150,10 +150,9 @@ const showRestablecer = `
 // PARA LOS EVENTOS 
 $(function(){
   let midb = 'smiles';  //Para base de datos 
-  let wiAuthTm = 3000;  //Tiempo para guardar en firestore
   let wiAuthIn = 'wiAuthIn';  //Para guardar auth en localstorage
   let wiAuthRol = 'wiAuthRol';  //Para guardar auth en localstorage
-  let rol = 'smile' //Rol default
+  let rol = 'usuario' //Rol default
 
 
   // Navegación entre modales
@@ -263,7 +262,7 @@ $('#Registrar').click(async function(){
     Mensaje('Registro completado! ✅');
 
   }catch(e){Mensaje({'auth/email-already-in-use': 'Email ya registrado', 'auth/weak-password': 'Contraseña muy débil'}[e.code] || e.message) || console.error(e);}
-  finally{savels(wiAuthIn,'wIn',24); savels(wiAuthRol,rol,24); CloseAuthM('registroModal')}
+  finally{savels(wiAuthIn,'wIn',24); savels(wiAuthRol,rol,24); setTimeout(()=> (accederRol(rol)), 3000); CloseAuthM('registroModal')}
 });
 
 // LOGIN CENTER APP 
@@ -275,14 +274,12 @@ $('#Login').click(async function() {
     if (!esEmail && !busq.exists()) throw new Error('Usuario no encontrado');
     const email = esEmail ? usuario : busq.data().email;
     await signInWithEmailAndPassword(auth, email, password);
-    
-    const tema = !esEmail ? (await getDoc(doc(db, 'preferencias', usuario)))?.data()?.wiTema : null;
-    savels(wiAuthIn,'wIn',24); 
-    if(tema) savels('wiTema', tema, 72);
+
+    savels(wiAuthIn,'wIn',24); savels(wiAuthRol, busq.data().rol, 24); 
   } catch(e) {
     const err = {'auth/invalid-credential':'Contraseña incorrecta','auth/invalid-email':'Falta registrar Email','auth/missing-email':'Email o usuario no registrado'};
     Mensaje(err[e.code] || e.message, 'error'); console.error(e);
-  } finally {CloseAuthM('loginModal'); location.reload()}
+  } finally {CloseAuthM('loginModal');}
 });
 
 // RECUPERAR CENTER APP 

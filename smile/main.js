@@ -10,24 +10,21 @@ import { publicoContenido } from './publico.js';
 import { personalContenido } from './personal.js';
 import { paratiContenido } from './parati.js';
 
-export let wiUsuario = null;
+// export let wiUsuario = null;
 
-const params = new URLSearchParams(window.location.search);
-const parati = params.get('parati');
-
-if (parati) {
-  paratiContenido(parati);
+const param = new URLSearchParams(window.location.search);
+if (param.toString()) {
+  paratiContenido(param);
 } else {
   onAuthStateChanged(auth, async user => {
     if (!user) return publicoContenido();
-    wiUsuario = user;
     try {
       const wi = getls('wiSmile');
-      if (wi) { personalContenido(wi); wiTema(db, wiUsuario); return; }
+      if (wi) { personalContenido(wi); return; }
 
       const busq = await getDocs(query(collection(db, 'smiles'), where('usuario', '==', user.displayName)));
-      const widt = busq.docs[0]?.data() || {};
-      savels('wiSmile', widt, 450); personalContenido(widt); wiTema(db, wiUsuario);
+      const widatos = busq.docs[0]?.data() || {};
+      savels('wiSmile', widatos, 450); personalContenido(widatos);
     } catch (e){console.error(e);}
   });
 
