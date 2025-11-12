@@ -7,13 +7,17 @@ import { getls, savels } from './widev.js';
 // CONTENIDO PARA TI (ULTRA COMPACTO)
 // =============================================
 export async function paratiContenido(params) {
-  const alias = params.get('fest');
-  const de = params.get('de');
-  const para = params.get('para');
-  const msgId = params.get('msg');
+  // Detectar URL corta: ?primavera o /?primavera
+  let alias = params.get('fest') || window.location.search.replace('?', '').split('&')[0];
+  
+  // Si no hay parámetros normales, usar valores por defecto
+  const de = params.get('de') || 'Amigos';
+  const para = params.get('para') || 'Amiga';
+  const msgId = params.get('msg') || 'main';
   const msgCustom = params.get('txt');
   
-  if (!alias || !de || !para || !msgId) return window.location.href = '/';
+  // Validar que al menos tengamos alias
+  if (!alias || alias.includes('=')) return window.location.href = '/';
   
   try {
     // Cache first, Firebase second
@@ -30,7 +34,10 @@ export async function paratiContenido(params) {
     
     if (!fest) return window.location.href = '/';
     
-    const msg = msgId === 'custom' && msgCustom ? msgCustom : fest.mensajes?.[msgId] || fest.descripcion;
+    // Buscar mensaje: custom > mensajes[msgId] > mensajes.main > descripcion
+    const msg = msgId === 'custom' && msgCustom 
+      ? msgCustom 
+      : fest.mensajes?.[msgId] || fest.mensajes?.main;
     
     const plantilla = await import(`./parati/${fest.plantilla || 'default'}.js`);
     $('.app').html(plantilla.default(fest, de, para, msg, fest.audioUrl));

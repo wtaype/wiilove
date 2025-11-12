@@ -1,657 +1,211 @@
 /* =============================================
    RESET Y VARIABLES
    ============================================= */
+
+:root {
+  --amarillo: #FFD700;
+  --amarillo_intenso: #FFC700;
+  --amarillo_claro: #FFEB3B;
+  --naranja: #FFA500;
+  --naranja_oscuro: #FF8C00;
+  --cafe: #8B4513;
+  --blanco: #FFFFFF;
+  --negro: #2C3E50;
+  --dorado: #D4AF37;
+  --dorado_oscuro: #B8860B;
+}
+
+body {
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Meta theme-color */
+head meta[name="theme-color"] {
+  content: #FFD700;
+}
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--amarillo_intenso) var(--amarillo_claro)
 }
 
-:root {
-  --amarillo: #FFD700;
-  --naranja: #FFA500;
-  --naranja-oscuro: #FF8C00;
-  --cafe: #8B4513;
-  --cafe-oscuro: #654321;
-  --blanco: #FFFFFF;
-  --negro: #333333;
-  --gris: #777777;
-}
 
 /* =============================================
-   BODY Y CONTENEDOR PRINCIPAL
+   WRAPPER PRINCIPAL
    ============================================= */
-body {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  min-height: 100vh;
-  background: linear-gradient(135deg, var(--amarillo) 0%, var(--naranja) 50%, var(--naranja-oscuro) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow-x: hidden;
-  position: relative;
-}
-
-.primavera-container {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  position: relative;
-}
-
-/* =============================================
-   PARTÍCULAS DE FONDO
-   ============================================= */
-.particles-bg {
+.primavera_envoltorio {
+  width: 100vw;
+  height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.particle {
-  position: absolute;
-  opacity: 0.4;
-  animation: float-particle 15s infinite ease-in-out;
-  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
-}
-
-@keyframes float-particle {
-  0%, 100% {
-    transform: translateY(0) translateX(0) rotate(0deg);
-  }
-  25% {
-    transform: translateY(-100px) translateX(50px) rotate(90deg);
-  }
-  50% {
-    transform: translateY(-200px) translateX(-50px) rotate(180deg);
-  }
-  75% {
-    transform: translateY(-100px) translateX(100px) rotate(270deg);
-  }
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* =============================================
-   FLORES FLOTANTES (FONT AWESOME)
+   SCROLLBAR PERSONALIZADO
    ============================================= */
-.floating-flowers {
+.primavera_envoltorio::-webkit-scrollbar {
+  width: 1vh;
+}
+
+.primavera_envoltorio::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, 
+    rgba(255, 215, 0, 0.3) 0%, 
+    rgba(255, 199, 0, 0.4) 50%, 
+    rgba(255, 165, 0, 0.5) 100%
+  );
+  border-radius: 2vh;
+}
+
+.primavera_envoltorio::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, 
+    var(--amarillo_intenso) 0%, 
+    var(--amarillo) 50%, 
+    var(--naranja) 100%
+  );
+  border-radius: 2vh;
+  box-shadow: 0 0 1vh rgba(255, 199, 0, 0.7);
+}
+
+.primavera_envoltorio::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, 
+    var(--amarillo) 0%, 
+    var(--amarillo_intenso) 100%
+  );
+  box-shadow: 0 0 1.5vh rgba(255, 215, 0, 0.9);
+}
+
+/* =============================================
+   FONDO DEGRADADO
+   ============================================= */
+.fondo_degradado {
   position: fixed;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 2;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(255, 235, 59, 0.5) 0%, transparent 60%),
+    radial-gradient(circle at 80% 70%, rgba(255, 199, 0, 0.45) 0%, transparent 55%),
+    radial-gradient(circle at 50% 50%, rgba(255, 140, 0, 0.3) 0%, transparent 70%),
+    linear-gradient(135deg, 
+      var(--amarillo_intenso) 0%, 
+      var(--amarillo) 25%,
+      var(--naranja) 60%,
+      var(--naranja_oscuro) 100%
+    );
+  animation: desplazamiento_gradiente 15s ease-in-out infinite;
 }
 
-.flower {
-  position: absolute;
-  font-size: 4rem;
-  color: rgba(255, 215, 0, 0.7);
-  left: var(--x);
-  top: var(--y);
-  animation: float-flower 8s infinite ease-in-out;
-  animation-delay: var(--delay);
-  filter: drop-shadow(0 5px 15px rgba(255, 140, 0, 0.4));
-  transition: transform 0.3s ease-out;
-}
-
-@keyframes float-flower {
+@keyframes desplazamiento_gradiente {
   0%, 100% {
-    transform: translateY(0) rotate(0deg) scale(1);
-    opacity: 0.7;
+    filter: brightness(1) saturate(1.1);
   }
   50% {
-    transform: translateY(-50px) rotate(180deg) scale(1.2);
-    opacity: 1;
+    filter: brightness(1.15) saturate(1.3);
   }
 }
 
 /* =============================================
-   CARD PRINCIPAL
+   PARTÍCULAS FLOTANTES
    ============================================= */
-.primavera-card {
-  max-width: 750px;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.98);
-  border-radius: 3rem;
-  padding: 4rem 3rem;
-  box-shadow: 
-    0 40px 100px rgba(255, 140, 0, 0.6),
-    inset 0 0 0 4px rgba(255, 215, 0, 0.5),
-    0 0 100px rgba(255, 215, 0, 0.3);
-  backdrop-filter: blur(20px);
+.particulas {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.particula {
+  position: absolute;
+  top: -5vh;
+  animation: caida_giro 14s linear infinite;
+  opacity: 0;
+  filter: drop-shadow(0 0 1.5vw rgba(255, 215, 0, 0.8));
+  will-change: transform, opacity;
+}
+
+@keyframes caida_giro {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(0.7);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 0.95;
+    transform: translateY(50vh) rotate(360deg) scale(1.15);
+  }
+  92% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translateY(108vh) rotate(720deg) scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* =============================================
+   CONTENEDOR PRINCIPAL - 100VH
+   ============================================= */
+.primavera_contenido {
   position: relative;
   z-index: 10;
-  overflow: hidden;
-}
-
-.primavera-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
-  animation: rotate-glow 15s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes rotate-glow {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* =============================================
-   HEADER
-   ============================================= */
-.card-header {
-  text-align: center;
-  margin-bottom: 3rem;
-  position: relative;
-  z-index: 1;
-}
-
-.date-badge {
-  display: inline-block;
-  padding: 0.8rem 2rem;
-  background: linear-gradient(135deg, var(--naranja-oscuro) 0%, var(--amarillo) 100%);
-  color: white;
-  font-weight: 700;
-  font-size: 1.1rem;
-  border-radius: 2rem;
-  box-shadow: 0 10px 30px rgba(255, 140, 0, 0.4);
-  margin-bottom: 1.5rem;
-  animation: pulse-badge 2s infinite;
-}
-
-@keyframes pulse-badge {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-.card-title {
-  font-size: 3rem;
-  font-weight: 900;
-  background: linear-gradient(135deg, var(--naranja-oscuro) 0%, var(--amarillo) 50%, var(--naranja-oscuro) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin: 1rem 0;
-  text-shadow: 0 5px 20px rgba(255, 140, 0, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  line-height: 1.2;
-}
-
-.emoji-left, .emoji-right {
-  font-size: 3.5rem;
-  animation: bounce-emoji 2s infinite;
-}
-
-.emoji-right {
-  animation-delay: 0.5s;
-}
-
-@keyframes bounce-emoji {
-  0%, 100% { transform: translateY(0) rotate(-5deg); }
-  50% { transform: translateY(-15px) rotate(5deg); }
-}
-
-.card-subtitle {
-  font-size: 1.1rem;
-  color: var(--naranja-oscuro);
-  font-weight: 600;
-  margin-top: 0.5rem;
-}
-
-/* =============================================
-   GIRASOL 3D MEJORADO
-   ============================================= */
-.sunflower-container {
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 3rem 0;
-  position: relative;
-  z-index: 1;
-}
-
-.sunflower {
-  position: relative;
-  width: 180px;
-  height: 180px;
-  animation: girar-sunflower 30s linear infinite;
-  filter: drop-shadow(0 20px 40px rgba(255, 140, 0, 0.5));
-  transform-style: preserve-3d;
-}
-
-@keyframes girar-sunflower {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-.sunflower-center {
-  position: absolute;
-  width: 70px;
-  height: 70px;
-  background: radial-gradient(circle, var(--cafe) 0%, var(--cafe-oscuro) 60%, #3d1f0f 100%);
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 3;
-  box-shadow: 
-    inset 0 -10px 20px rgba(0, 0, 0, 0.5),
-    0 10px 30px rgba(139, 69, 19, 0.6);
-}
-
-.center-detail {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
-  border-radius: 50%;
-}
-
-.petal {
-  position: absolute;
-  width: 50px;
-  height: 90px;
-  top: 50%;
-  left: 50%;
-  transform-origin: center bottom;
-  transform: translate(-50%, -100%) rotate(calc(var(--index) * 30deg));
-}
-
-.petal-inner {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, var(--amarillo) 0%, var(--naranja) 50%, var(--naranja-oscuro) 100%);
-  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  box-shadow: 
-    inset 0 -5px 10px rgba(255, 140, 0, 0.5),
-    0 5px 15px rgba(255, 215, 0, 0.6);
-  animation: wave-petal 3s ease-in-out infinite;
-  animation-delay: calc(var(--index) * 0.1s);
-}
-
-@keyframes wave-petal {
-  0%, 100% { transform: scale(1) translateY(0); }
-  50% { transform: scale(1.1) translateY(-5px); }
-}
-
-.sunflower-stem {
-  width: 8px;
-  height: 100px;
-  background: linear-gradient(180deg, #228B22 0%, #006400 100%);
-  border-radius: 4px;
-  margin-top: -10px;
-  box-shadow: inset -2px 0 5px rgba(0, 0, 0, 0.3);
-}
-
-.sunflower-leaf {
-  position: absolute;
-  width: 40px;
-  height: 60px;
-  background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
-  border-radius: 50% 0%;
-  box-shadow: 0 5px 15px rgba(34, 139, 34, 0.5);
-}
-
-.sunflower-leaf-left {
-  bottom: 50px;
-  left: -15px;
-  transform: rotate(-30deg);
-}
-
-.sunflower-leaf-right {
-  bottom: 30px;
-  right: -15px;
-  transform: rotate(30deg) scaleX(-1);
+  justify-content: center;
+  padding: 0.5vh 3vw;
 }
 
 /* =============================================
-   MENSAJE
+   CARD DEL MENSAJE
    ============================================= */
-.message-box {
-  text-align: center;
-  margin: 3rem 0;
+.tarjeta_mensaje {
+  width: min(90vw, 700px);
+  background: var(--blanco);
+  border-radius: 3vh;
+  padding: 2vh 4vw;
+  box-shadow: 0 2vh 4vh rgba(0, 0, 0, 0.2);
+  animation: deslizar_arriba 1s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
-  z-index: 1;
+  overflow: visible;
+  max-height: 95vh;
+  overflow-y: auto;
 }
 
-.greeting {
-  font-size: 2rem;
-  color: var(--negro);
-  font-weight: 700;
-  margin-bottom: 2rem;
-}
-
-.highlight-name {
-  background: linear-gradient(135deg, var(--naranja-oscuro) 0%, var(--amarillo) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-size: 2.5rem;
-  font-weight: 900;
-  display: inline-block;
-  animation: shimmer 3s infinite;
-}
-
-@keyframes shimmer {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.3); }
-}
-
-.love-message {
-  position: relative;
-  padding: 2.5rem;
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
-  border-radius: 2rem;
-  border: 3px dashed rgba(255, 140, 0, 0.4);
-  margin: 2rem 0;
-  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
-}
-
-.quote-left, .quote-right {
-  position: absolute;
-  font-size: 4rem;
-  font-family: Georgia, serif;
-  font-weight: 700;
-  color: rgba(255, 140, 0, 0.3);
-}
-
-.quote-left {
-  top: -10px;
-  left: 10px;
-}
-
-.quote-right {
-  bottom: -40px;
-  right: 10px;
-}
-
-.message-text {
-  font-size: 1.4rem;
-  line-height: 2;
-  color: var(--negro);
-  font-style: italic;
-  font-weight: 500;
-}
-
-.signature-box {
-  margin-top: 3rem;
-  position: relative;
-}
-
-.signature-text {
-  font-size: 1.2rem;
-  color: var(--gris);
-  margin-bottom: 0.5rem;
-}
-
-.signature-name {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--naranja-oscuro);
-  font-family: 'Brush Script MT', cursive;
-  text-shadow: 2px 2px 4px rgba(255, 140, 0, 0.3);
-}
-
-.signature-emoji {
-  font-size: 2rem;
-  display: inline-block;
-  animation: pulse-emoji 1.5s infinite;
-}
-
-@keyframes pulse-emoji {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-}
-
-/* =============================================
-   BOTÓN CORAZÓN
-   ============================================= */
-.heart-button {
-  width: 100%;
-  padding: 1.5rem;
-  margin: 2rem 0 1rem 0;
-  background: linear-gradient(135deg, var(--naranja-oscuro) 0%, var(--amarillo) 100%);
-  color: white;
-  border: none;
-  border-radius: 2.5rem;
-  font-size: 1.4rem;
-  font-weight: 800;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 
-    0 15px 40px rgba(255, 140, 0, 0.5),
-    inset 0 -5px 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-  z-index: 1;
-}
-
-.heart-button:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 20px 50px rgba(255, 140, 0, 0.7);
-}
-
-.heart-button.clicked {
-  animation: button-explode 0.6s ease-out;
-}
-
-@keyframes button-explode {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
-.heart-icon {
-  font-size: 1.6rem;
-  margin-right: 0.8rem;
-  animation: heartbeat 1.2s infinite;
-  display: inline-block;
-}
-
-@keyframes heartbeat {
-  0%, 100% { transform: scale(1); }
-  25% { transform: scale(1.2); }
-  50% { transform: scale(1); }
-  75% { transform: scale(1.15); }
-}
-
-.btn-text {
-  position: relative;
-  z-index: 1;
-}
-
-.btn-shine {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    45deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.3) 50%,
-    transparent 70%
-  );
-  animation: shine 3s infinite;
-  pointer-events: none;
-}
-
-@keyframes shine {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-}
-
-/* =============================================
-   BOTÓN VOLVER
-   ============================================= */
-.back-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 1rem 2rem;
-  background: rgba(255, 255, 255, 0.8);
-  color: var(--naranja-oscuro);
-  text-decoration: none;
-  border-radius: 2rem;
-  font-weight: 700;
-  font-size: 1.1rem;
-  border: 2px solid rgba(255, 140, 0, 0.3);
-  transition: all 0.3s;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.back-button:hover {
-  background: white;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(255, 140, 0, 0.3);
-}
-
-/* =============================================
-   CONTROL DE MÚSICA
-   ============================================= */
-.music-control {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 100;
-}
-
-.music-btn {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--naranja-oscuro) 0%, var(--amarillo) 100%);
-  border: 4px solid white;
-  color: white;
-  font-size: 1.8rem;
-  cursor: pointer;
-  position: relative;
-  box-shadow: 
-    0 15px 40px rgba(255, 140, 0, 0.6),
-    inset 0 -3px 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s;
-  overflow: hidden;
-}
-
-.music-btn:hover {
-  transform: scale(1.1) rotate(10deg);
-  box-shadow: 0 20px 50px rgba(255, 140, 0, 0.8);
-}
-
-.music-btn.playing {
-  animation: rotate-music 3s linear infinite;
-}
-
-@keyframes rotate-music {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.music-icon, .pause-icon {
-  position: relative;
-  z-index: 2;
-  transition: all 0.3s;
-}
-
-.music-waves {
-  position: absolute;
-  bottom: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 3px;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.music-waves.active {
-  opacity: 1;
-}
-
-.wave {
-  width: 3px;
-  height: 12px;
-  background: white;
-  border-radius: 2px;
-  animation: wave-animate 0.8s infinite ease-in-out;
-}
-
-.wave:nth-child(1) { animation-delay: 0s; }
-.wave:nth-child(2) { animation-delay: 0.2s; }
-.wave:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes wave-animate {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(1.8); }
-}
-
-.music-tooltip {
-  position: absolute;
-  bottom: 80px;
-  right: 0;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-
-.music-control:hover .music-tooltip {
-  opacity: 1;
-}
-
-/* =============================================
-   CORAZONES FLOTANTES
-   ============================================= */
-.heart-float {
-  position: fixed;
-  font-size: 2rem;
-  animation: float-up-heart 3s ease-out forwards;
-  pointer-events: none;
-  z-index: 999;
-  filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.8));
-}
-
-@keyframes float-up-heart {
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-50vh) scale(1.5) rotate(180deg);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-100vh) scale(0.5) rotate(360deg);
-  }
-}
-
-/* =============================================
-   ANIMACIONES DE ENTRADA
-   ============================================= */
-@keyframes fadeInUp {
+@keyframes deslizar_arriba {
   from {
     opacity: 0;
-    transform: translateY(50px);
+    transform: translateY(10vh) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =============================================
+   HEADER: IMAGEN REAL DE GIRASOL
+   ============================================= */
+.encabezado_tarjeta {
+  text-align: center;
+  animation: aparecer_abajo 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-bottom: 1.5vh;
+}
+
+@keyframes aparecer_abajo {
+  from {
+    opacity: 0;
+    transform: translateY(-5vh);
   }
   to {
     opacity: 1;
@@ -659,87 +213,737 @@ body {
   }
 }
 
+.imagen_girasol {
+  width: 80%;
+  max-height: 28vh;
+  height: auto;
+  margin: 0 auto 1vh;
+  border-radius: 2vh;
+  overflow: hidden;
+  box-shadow: 0 1vh 2vh rgba(255, 140, 0, 0.4);
+  animation: flotacion_imagen 4s ease-in-out infinite;
+  position: relative;
+}
+
+@keyframes flotacion_imagen {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1vh);
+  }
+}
+
+.imagen_girasol img {
+  width: 100%;
+  height:31vh;
+  object-fit: cover;
+  filter: brightness(1.1) contrast(1.05) saturate(1.2);
+}
+
+/* =============================================
+   PARA
+   ============================================= */
+.texto_saludo {
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  font-weight: 800;
+  color: var(--negro);
+  text-align: center;
+  margin-bottom: 1.5vh;
+}
+
+.nombre_resaltado {
+  background: 
+    linear-gradient(135deg, 
+      var(--amarillo_intenso) 0%, 
+      var(--amarillo) 30%,
+      var(--naranja) 70%,
+      var(--naranja_oscuro) 100%
+    );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.25em;
+  font-weight: 900;
+  animation: brillo_nombre 4s ease infinite;
+  position: relative;
+  display: inline-block;
+}
+
+@keyframes brillo_nombre {
+  0%, 100% { 
+    background-position: 0% 50%;
+  }
+  50% { 
+    background-position: 100% 50%;
+  }
+}
+
+.nombre_resaltado::after {
+  content: '💫';
+  position: absolute;
+  right: -2vw;
+  top: -0.5vh;
+  font-size: 0.6em;
+  animation: giro_estrella 3s linear infinite;
+}
+
+@keyframes giro_estrella {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* =============================================
+   SOBRE INTERACTIVO DORADO
+   ============================================= */
+.contenedor_sobre {
+  position: relative;
+  width: 100%;
+  height: 35vh;
+  margin: 2vh 0;
+  cursor: pointer;
+  perspective: 1000px;
+}
+
+/* Sobre Cerrado */
+.sobre_cerrado {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-style: preserve-3d;
+}
+
+.contenedor_sobre.abierto .sobre_cerrado {
+  transform: translateY(-120%) rotateX(-180deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Solapa Superior Dorada */
+.sobre_solapa_superior {
+  position: absolute;
+  width: 100%;
+  height: 45%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(135deg, var(--dorado_oscuro), var(--dorado), var(--amarillo));
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  box-shadow: 
+    0 1vh 2vh rgba(0, 0, 0, 0.3),
+    inset 0 -0.5vh 1vh rgba(255, 255, 255, 0.3);
+  z-index: 2;
+  animation: brillo_dorado 3s ease-in-out infinite;
+}
+
+@keyframes brillo_dorado {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3);
+  }
+}
+
+/* Cuerpo del Sobre */
+.sobre_cuerpo {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--dorado), var(--amarillo_intenso));
+  border: 0.5vh solid var(--dorado_oscuro);
+  border-radius: 1vh;
+  box-shadow: 
+    0 1.5vh 3vh rgba(0, 0, 0, 0.3),
+    inset 0 0 2vh rgba(255, 255, 255, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5vh;
+}
+
+/* Sello del Sobre */
+.sobre_sello {
+  font-size: 3.5rem;
+  animation: pulso_sello 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 1.5vh rgba(255, 215, 0, 0.9));
+}
+
+@keyframes pulso_sello {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(10deg);
+  }
+}
+
+.sobre_texto_click {
+  font-size: clamp(0.9rem, 2.2vw, 1.2rem);
+  font-weight: 700;
+  color: var(--blanco);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  animation: parpadeo_texto 1.5s ease-in-out infinite;
+}
+
+@keyframes parpadeo_texto {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Carta Interior */
+.carta_interior {
+  position: absolute;
+  width: 95%;
+  height: 85%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: var(--blanco);
+  border: 0.3vh solid rgba(255, 199, 0, 0.6);
+  border-radius: 2vh;
+  box-shadow: 
+    0 1vh 2vh rgba(255, 140, 0, 0.2),
+    inset 0 0 0 0.5vh rgba(255, 255, 255, 0.8);
+  transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0;
+}
+
+.contenedor_sobre.abierto .carta_interior {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.carta_contenido {
+  width: 100%;
+  height: 100%;
+  padding: 3vh 2.5vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.carta_contenido::before,
+.carta_contenido::after {
+  font-family: Georgia, serif;
+  font-size: 5vh;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--amarillo_intenso), var(--naranja));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: absolute;
+  filter: drop-shadow(0 0.5vh 1vh rgba(255, 140, 0, 0.4));
+}
+
+.carta_contenido::before {
+  content: '"';
+  top: 1vh;
+  left: 2vw;
+}
+
+.carta_contenido::after {
+  content: '"';
+  bottom: 1vh;
+  right: 2vw;
+}
+
+.cuerpo_mensaje {
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  line-height: 1.8;
+  color: var(--negro);
+  font-weight: 600;
+  font-style: italic;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* =============================================
+   DE
+   ============================================= */
+.firma {
+  text-align: center;
+  margin-top: 2vh;
+  font-size: clamp(1rem, 2.3vw, 1.3rem);
+  position: relative;
+}
+
+.firma::before {
+  content: '🌼';
+  position: absolute;
+  left: 50%;
+  top: -3vh;
+  transform: translateX(-50%);
+  font-size: 1.5em;
+  animation: flotacion_flor 3s ease-in-out infinite;
+}
+
+@keyframes flotacion_flor {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-1vh) rotate(8deg);
+  }
+}
+
+.etiqueta_firma {
+  color: var(--negro);
+  opacity: 0.8;
+  margin-right: 1.5vw;
+  font-weight: 700;
+}
+
+.nombre_firma {
+  font-family: 'Brush Script MT', 'Segoe Script', cursive;
+  font-size: 1.6em;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--amarillo_intenso), var(--naranja_oscuro));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  display: inline-block;
+}
+
+.nombre_firma::after {
+  content: '💛';
+  position: absolute;
+  right: -2vw;
+  top: -0.5vh;
+  animation: latido_firma 1.5s ease-in-out infinite;
+}
+
+@keyframes latido_firma {
+  0%, 100% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.3);
+  }
+  60% {
+    transform: scale(1.1);
+  }
+}
+
+/* =============================================
+   BOTÓN CORAZÓN
+   ============================================= */
+.boton_corazon {
+  width: 100%;
+  padding: 2vh 0;
+  margin-top: 2vh;
+  background: 
+    linear-gradient(135deg, 
+      var(--amarillo_intenso) 0%, 
+      var(--amarillo) 30%,
+      var(--naranja) 70%, 
+      var(--naranja_oscuro) 100%
+    );
+  background-size: 300% 300%;
+  color: var(--blanco);
+  border: none;
+  border-radius: 3vh;
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2vw;
+  box-shadow: 0 1.5vh 3vh rgba(255, 140, 0, 0.5);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  animation: brillo_boton 3s ease-in-out infinite;
+}
+
+@keyframes brillo_boton {
+  0%, 100% {
+    background-position: 0% 50%;
+    box-shadow: 0 1.5vh 3vh rgba(255, 140, 0, 0.5);
+  }
+  50% {
+    background-position: 100% 50%;
+    box-shadow: 0 2vh 4vh rgba(255, 140, 0, 0.7);
+  }
+}
+
+.boton_corazon::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.8s, height 0.8s;
+}
+
+.boton_corazon:hover {
+  box-shadow: 0 2.5vh 5vh rgba(255, 140, 0, 0.8);
+}
+
+.boton_corazon:hover::before {
+  width: 130%;
+  height: 600%;
+}
+
+.boton_corazon.clickeado {
+  animation: explotar_boton 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes explotar_boton {
+  0%, 100% { 
+    transform: scale(1); 
+  }
+  20% {
+    transform: scale(1.15);
+  }
+  40% { 
+    transform: scale(0.92); 
+  }
+  60% {
+    transform: scale(1.08);
+  }
+}
+
+.boton_corazon i {
+  font-size: 1.5em;
+  animation: latido_boton 1.3s infinite;
+  filter: drop-shadow(0 0 1vh rgba(255, 255, 255, 0.9));
+}
+
+@keyframes latido_boton {
+  0%, 100% { 
+    transform: scale(1); 
+  }
+  10% {
+    transform: scale(1.4);
+  }
+  20% { 
+    transform: scale(1); 
+  }
+  30% {
+    transform: scale(1.3);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* =============================================
+   FECHA Y TÍTULO
+   ============================================= */
+.chip_fecha {
+  display: inline-block;
+  padding: 1vh 2.5vw;
+  margin-top: 2vh;
+  background: 
+    linear-gradient(135deg, 
+      var(--amarillo_intenso) 0%, 
+      var(--amarillo) 50%, 
+      var(--naranja) 100%
+    );
+  background-size: 200% 200%;
+  color: var(--blanco);
+  border-radius: 3vh;
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  font-weight: 800;
+  box-shadow: 0 0.8vh 1.5vh rgba(255, 140, 0, 0.5);
+  animation: pulso_chip 2s ease-in-out infinite;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  width: 100%;
+  text-align: center;
+}
+
+@keyframes pulso_chip {
+  0%, 100% { 
+    transform: scale(1);
+    background-position: 0% 50%;
+  }
+  50% { 
+    transform: scale(1.05);
+    background-position: 100% 50%;
+  }
+}
+
+.titulo_gradiente {
+  font-size: clamp(2rem, 5.5vw, 3rem);
+  font-weight: 900;
+  background: 
+    linear-gradient(135deg, 
+      var(--naranja_oscuro) 0%, 
+      var(--amarillo_intenso) 25%,
+      var(--amarillo) 50%,
+      var(--amarillo_intenso) 75%,
+      var(--naranja_oscuro) 100%
+    );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 1vh 0 0;
+  letter-spacing: 0.15vw;
+  animation: flujo_gradiente 5s ease infinite;
+  text-align: center;
+}
+
+@keyframes flujo_gradiente {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* =============================================
+   FOOTER - DESPUÉS DE 100VH
+   ============================================= */
+.pie_pagina {
+  position: relative;
+  width: 100%;
+  height: 5vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  animation: aparecer 1.5s ease-in-out;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.texto_pie {
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+  color: var(--blanco);
+  font-weight: 700;
+  padding: 0.8vh 2vw;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(1vh);
+  border-radius: 2vh;
+  box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.15);
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.texto_pie:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-0.3vh);
+}
+
+/* =============================================
+   BOTÓN MÚSICA
+   ============================================= */
+.boton_musica_flotante {
+  position: fixed;
+  bottom: 3vh;
+  right: 3vw;
+  width: 7vh;
+  height: 7vh;
+  border-radius: 50%;
+  border: 0.4vh solid rgba(255, 255, 255, 0.8);
+  background: 
+    linear-gradient(135deg, 
+      var(--amarillo_intenso) 0%, 
+      var(--amarillo) 50%, 
+      var(--naranja) 100%
+    );
+  background-size: 200% 200%;
+  color: var(--blanco);
+  font-size: 2.5vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1vh 2vh rgba(0, 0, 0, 0.3);
+  transition: all 0.4s;
+  z-index: 100;
+  animation: flotacion_musica 3s ease-in-out infinite;
+}
+
+@keyframes flotacion_musica {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-0.8vh) scale(1.05);
+  }
+}
+
+.boton_musica_flotante:hover {
+  transform: scale(1.15);
+  background-position: 100% 50%;
+  box-shadow: 0 1.5vh 3vh rgba(0, 0, 0, 0.4);
+}
+
+.boton_musica_flotante.reproduciendo {
+  animation: rotacion_musica 5s linear infinite;
+}
+
+@keyframes rotacion_musica {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.onda_musica {
+  position: absolute;
+  bottom: 1.5vh;
+  display: flex;
+  gap: 0.4vh;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.boton_musica_flotante.reproduciendo .onda_musica {
+  opacity: 1;
+}
+
+.onda_musica i {
+  display: block;
+  width: 0.4vh;
+  height: 1.5vh;
+  background: var(--blanco);
+  border-radius: 0.2vh;
+  animation: barra_onda 1s ease-in-out infinite;
+  filter: drop-shadow(0 0 0.5vh rgba(255, 255, 255, 0.8));
+}
+
+.onda_musica i:nth-child(1) { animation-delay: 0s; }
+.onda_musica i:nth-child(2) { animation-delay: 0.15s; }
+.onda_musica i:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes barra_onda {
+  0%, 100% { 
+    transform: scaleY(1); 
+  }
+  50% { 
+    transform: scaleY(2); 
+  }
+}
+
+/* =============================================
+   CORAZONES FLOTANTES
+   ============================================= */
+.corazon_flotante {
+  position: fixed;
+  font-size: 4vh;
+  animation: flotacion_corazon 3s ease-out forwards;
+  pointer-events: none;
+  z-index: 999;
+  filter: drop-shadow(0 0 1.5vh rgba(255, 20, 147, 0.9));
+  will-change: transform, opacity;
+}
+
+@keyframes flotacion_corazon {
+  0% {
+    opacity: 1;
+    transform: translateY(0) translateX(0) scale(0) rotate(0deg);
+  }
+  20% {
+    transform: translateY(-20vh) translateX(5vw) scale(1.2) rotate(72deg);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-45vh) translateX(-3vw) scale(1.6) rotate(144deg);
+  }
+  60% {
+    transform: translateY(-70vh) translateX(4vw) scale(1.3) rotate(216deg);
+  }
+  80% {
+    transform: translateY(-90vh) translateX(-2vw) scale(1) rotate(288deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-110vh) translateX(0) scale(0.5) rotate(360deg);
+  }
+}
+
 /* =============================================
    RESPONSIVE
    ============================================= */
 @media (max-width: 768px) {
-  .primavera-card {
-    padding: 3rem 2rem;
-    border-radius: 2rem;
+  .primavera_contenido {
+    padding: 0.5vh 4vw;
   }
 
-  .card-title {
-    font-size: 2rem;
-    flex-direction: column;
-    gap: 0.5rem;
+  .tarjeta_mensaje {
+    width: 95vw;
+    padding: 1.5vh 4vw;
   }
 
-  .emoji-left, .emoji-right {
-    font-size: 2.5rem;
+  .imagen_girasol {
+    width: 85%;
+    max-height: 25vh;
   }
 
-  .sunflower {
-    width: 120px;
-    height: 120px;
+  .contenedor_sobre {
+    height: 30vh;
   }
 
-  .sunflower-center {
-    width: 50px;
-    height: 50px;
-  }
-
-  .petal {
-    width: 35px;
-    height: 60px;
-  }
-
-  .greeting {
-    font-size: 1.5rem;
-  }
-
-  .highlight-name {
-    font-size: 1.8rem;
-  }
-
-  .message-text {
-    font-size: 1.1rem;
-  }
-
-  .heart-button {
-    font-size: 1.2rem;
-    padding: 1.2rem;
-  }
-
-  .flower {
-    font-size: 2.5rem;
-  }
-
-  .music-btn {
-    width: 60px;
-    height: 60px;
-    font-size: 1.5rem;
-  }
-
-  .music-control {
-    bottom: 1.5rem;
-    right: 1.5rem;
+  .boton_musica_flotante {
+    width: 6vh;
+    height: 6vh;
+    font-size: 2vh;
+    bottom: 2vh;
+    right: 2vw;
   }
 }
 
 @media (max-width: 480px) {
-  .primavera-container {
-    padding: 1rem;
+  .titulo_gradiente {
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
   }
 
-  .card-title {
-    font-size: 1.5rem;
+  .nombre_resaltado::after {
+    display: none;
   }
 
-  .love-message {
-    padding: 1.5rem;
+  .chip_fecha {
+    font-size: 3vw;
   }
 
-  .quote-left, .quote-right {
-    font-size: 3rem;
+  .contenedor_sobre {
+    height: 28vh;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .tarjeta_mensaje {
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 1.5vh 4vw;
+  }
+
+  .imagen_girasol {
+    width: 70%;
+    max-height: 20vh;
+  }
+
+  .contenedor_sobre {
+    height: 22vh;
   }
 }
