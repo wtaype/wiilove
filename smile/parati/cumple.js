@@ -7,10 +7,8 @@ export default (fest, de, para, msg, audio) => {
   
   const html = `
     <div class="cumple_envoltorio">
-      <!-- Fondo degradado -->
       <div class="fondo_degradado"></div>
       
-      <!-- Partículas flotantes -->
       <div class="particulas">
         ${Array.from({length: particleCount}, (_, i) => `
           <span class="particula" style="
@@ -21,7 +19,6 @@ export default (fest, de, para, msg, audio) => {
         `).join('')}
       </div>
       
-      <!-- Confeti -->
       <div class="confeti">
         ${Array.from({length: isMobile ? 30 : 50}, (_, i) => `
           <div class="confeti_pieza" style="
@@ -32,11 +29,8 @@ export default (fest, de, para, msg, audio) => {
         `).join('')}
       </div>
       
-      <!-- Contenedor principal -->
       <div class="cumple_contenido">
         <div class="tarjeta_mensaje">
-          
-          <!-- Imagen -->
           <div class="encabezado_tarjeta">
             <div class="imagen_cumple">
               <img src="${fest.imagen}" alt="Cumpleaños" loading="lazy">
@@ -44,12 +38,10 @@ export default (fest, de, para, msg, audio) => {
             </div>
           </div>
           
-          <!-- Para -->
           <p class="texto_saludo">
             🎉 Para: <span class="nombre_resaltado">${para}</span> 🎉
           </p>
           
-          <!-- SOBRE INTERACTIVO -->
           <div class="contenedor_sobre" id="contenedorSobre" role="button" tabindex="0" aria-label="Abrir mensaje">
             <div class="sobre_cerrado">
               <div class="sobre_solapa_superior"></div>
@@ -66,33 +58,25 @@ export default (fest, de, para, msg, audio) => {
             </div>
           </div>
           
-          <!-- De -->
           <div class="firma">
             <span class="etiqueta_firma">Con cariño: </span>
             <span class="nombre_firma">${de}</span>
           </div>
           
-          <!-- Botón Celebrar -->
           <button class="boton_celebrar" id="botonCelebrar" aria-label="Celebrar cumpleaños">
             <i class="fas fa-birthday-cake"></i>
             <span>¡Sopla la vela!</span>
           </button>
 
-          <!-- Fecha -->
           <div class="chip_fecha">${fest.fechaTexto}</div>
-          
-          <!-- Título -->
           <h1 class="titulo_gradiente">${fest.nombre}</h1>
-          
         </div>
       </div>
       
-      <!-- FOOTER -->
       <footer class="pie_pagina">
         <a href="/" class="texto_pie">Personaliza para ti</a>
       </footer>
       
-      <!-- Botón música -->
       <button class="boton_musica_flotante" id="botonMusica" aria-label="Controlar música">
         <i class="fas fa-music" id="iconoMusica"></i>
         <i class="fas fa-pause" id="iconoPausa" style="display:none;"></i>
@@ -127,7 +111,6 @@ export default (fest, de, para, msg, audio) => {
       }
     };
 
-    // Autoplay
     musica.play().then(() => {
       reproduciendo = true;
       botonMus.addClass('reproduciendo');
@@ -137,7 +120,6 @@ export default (fest, de, para, msg, audio) => {
 
     botonMus.on('click', toggleMusica);
 
-    // Sobre interactivo
     let sobreAbierto = false;
     const $sobre = $('#contenedorSobre');
     
@@ -154,7 +136,6 @@ export default (fest, de, para, msg, audio) => {
       }
     });
 
-    // Botón celebración
     $('#botonCelebrar').on('click', function() {
       $(this).addClass('clickeado');
       
@@ -179,12 +160,10 @@ export default (fest, de, para, msg, audio) => {
       setTimeout(() => $(this).removeClass('clickeado'), 600);
     });
 
-    // Cleanup
     $(window).on('beforeunload', () => {
       musica.pause();
       musica.src = '';
     });
-    
   }, 100);
 
   return html;
