@@ -33,7 +33,7 @@ export default (fest, de, para, msg, audio) => {
           
           <!-- Para -->
           <p class="texto_saludo">
-            Para <span class="nombre_resaltado">${para}</span> 💛
+            Para ti: <span class="nombre_resaltado">${para}</span> 💛
           </p>
           
           <!-- SOBRE INTERACTIVO -->
@@ -55,7 +55,7 @@ export default (fest, de, para, msg, audio) => {
           
           <!-- De -->
           <div class="firma">
-            <span class="etiqueta_firma">De:</span>
+            <span class="etiqueta_firma">De parte: </span>
             <span class="nombre_firma">${de}</span>
           </div>
           

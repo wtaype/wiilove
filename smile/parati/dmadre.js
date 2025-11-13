@@ -1,12 +1,12 @@
 import $ from 'jquery';
-import './cumple.css';
+import './dmadre.css';
 
 export default (fest, de, para, msg, audio) => {
   const isMobile = window.innerWidth < 768;
-  const particleCount = isMobile ? 20 : 40;
+  const particleCount = isMobile ? 20 : 35;
   
   const html = `
-    <div class="cumple_envoltorio">
+    <div class="dmadre_envoltorio">
       <!-- Fondo degradado -->
       <div class="fondo_degradado"></div>
       
@@ -16,37 +16,26 @@ export default (fest, de, para, msg, audio) => {
           <span class="particula" style="
             left:${Math.random()*100}%;
             animation-delay:${Math.random()*5}s;
-            font-size:${isMobile ? '5vw' : '2.5vw'};
-          ">${['🎂','🎈','🎉','🎁','🥳','✨','🍰','🎊'][Math.floor(Math.random()*8)]}</span>
-        `).join('')}
-      </div>
-      
-      <!-- Confeti -->
-      <div class="confeti">
-        ${Array.from({length: isMobile ? 30 : 50}, (_, i) => `
-          <div class="confeti_pieza" style="
-            left:${Math.random()*100}%;
-            animation-delay:${Math.random()*4}s;
-            background:hsl(${Math.random()*360}, 80%, 60%);
-          "></div>
+            font-size:${isMobile ? '4.5vw' : '2.2vw'};
+          ">${['🌸','💐','🌹','💕','💗','🦋','🌺','👩'][Math.floor(Math.random()*8)]}</span>
         `).join('')}
       </div>
       
       <!-- Contenedor principal -->
-      <div class="cumple_contenido">
+      <div class="dmadre_contenido">
         <div class="tarjeta_mensaje">
           
           <!-- Imagen -->
           <div class="encabezado_tarjeta">
-            <div class="imagen_cumple">
-              <img src="${fest.imagen}" alt="Cumpleaños" loading="lazy">
-              <div class="circulo_pulso"></div>
+            <div class="imagen_madre">
+              <img src="${fest.imagen}" alt="Día de la Madre" loading="lazy">
+              <div class="flor_decorativa">🌸</div>
             </div>
           </div>
           
           <!-- Para -->
           <p class="texto_saludo">
-            🎉 Para: <span class="nombre_resaltado">${para}</span> 🎉
+            🌹 Para: <span class="nombre_resaltado">${para}</span> 🌹
           </p>
           
           <!-- SOBRE INTERACTIVO -->
@@ -54,8 +43,8 @@ export default (fest, de, para, msg, audio) => {
             <div class="sobre_cerrado">
               <div class="sobre_solapa_superior"></div>
               <div class="sobre_cuerpo">
-                <div class="sobre_sello">🎂</div>
-                <p class="sobre_texto_click">¡Abre tu regalo!</p>
+                <div class="sobre_sello">👩‍👧</div>
+                <p class="sobre_texto_click">¡Abre tu mensaje!</p>
               </div>
             </div>
             
@@ -68,21 +57,21 @@ export default (fest, de, para, msg, audio) => {
           
           <!-- De -->
           <div class="firma">
-            <span class="etiqueta_firma">Con cariño: </span>
+            <span class="etiqueta_firma">Con amor: </span>
             <span class="nombre_firma">${de}</span>
           </div>
           
           <!-- Botón Celebrar -->
-          <button class="boton_celebrar" id="botonCelebrar" aria-label="Celebrar cumpleaños">
-            <i class="fas fa-birthday-cake"></i>
-            <span>¡Sopla la vela!</span>
+          <button class="boton_celebrar" id="botonCelebrar" aria-label="Celebrar día de la madre">
+            <i class="fas fa-heart"></i>
+            <span>¡Feliz Día Mamá!</span>
           </button>
 
           <!-- Fecha -->
           <div class="chip_fecha">${fest.fechaTexto}</div>
           
           <!-- Título -->
-          <h1 class="titulo_gradiente">${fest.nombre}</h1>
+          <h1 class="titulo_gradiente">Día de la Madre</h1>
           
         </div>
       </div>
@@ -158,7 +147,7 @@ export default (fest, de, para, msg, audio) => {
     $('#botonCelebrar').on('click', function() {
       $(this).addClass('clickeado');
       
-      const emojis = ['🎂','🎉','🎈','🎁','✨','🎊','🥳','🍰'];
+      const emojis = ['💗','🌸','💐','🌹','💕','🦋','🌺','✨'];
       const count = isMobile ? 12 : 20;
       
       for (let i = 0; i < count; i++) {
@@ -168,12 +157,12 @@ export default (fest, de, para, msg, audio) => {
             .css({
               left: Math.random() * 100 + '%',
               bottom: '0',
-              animationDuration: (2 + Math.random() * 1.5) + 's'
+              animationDuration: (2.5 + Math.random() * 1.2) + 's'
             })
-            .appendTo('.cumple_envoltorio')
-            .delay(2500)
-            .fadeOut(400, function() { $(this).remove(); });
-        }, i * 35);
+            .appendTo('.dmadre_envoltorio')
+            .delay(3000)
+            .fadeOut(450, function() { $(this).remove(); });
+        }, i * 38);
       }
       
       setTimeout(() => $(this).removeClass('clickeado'), 600);

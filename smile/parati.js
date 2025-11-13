@@ -22,10 +22,10 @@ export async function paratiContenido(params) {
   try {
     // Cache first, Firebase second
     const cache = getls('wisfesti');
-    let fest = cache?.find(f => f.alias === alias || f.nombreId === alias);
+    let fest = cache?.find(f => f.plantilla === alias);
     
     if (!fest) {
-      const snap = await getDocs(query(collection(db, 'festividades'), where('alias', '==', alias)));
+      const snap = await getDocs(query(collection(db, 'festividades'), where('plantilla', '==', alias)));
       if (!snap.empty) {
         fest = { id: snap.docs[0].id, ...snap.docs[0].data() };
         savels('wisfesti', [...(cache || []), fest], 24);

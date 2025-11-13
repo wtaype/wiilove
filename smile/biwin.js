@@ -1,274 +1,142 @@
 import $ from 'jquery';
-import { abrirModal, cerrarModal } from './wimodal.js';
-import { Mensaje, Notificacion } from './widev.js';
+import { abrirModal } from './wimodal.js';
+import { Mensaje, Notificacion, savels, getls } from './widev.js';
 
-// =============================================
-// MENSAJES PREDEFINIDOS POR FESTIVIDAD
-// =============================================
-const mensajesPorFest = {
-  flores_amarillas: [
-    { id: 'amor', texto: '🌻 Como estas flores amarillas iluminan mi día, tú iluminas mi vida cada momento. ¡Feliz día de las flores amarillas! 💛' },
-    { id: 'amistad', texto: '🌻 En este día tan especial, quiero regalarte estas flores amarillas que representan nuestra hermosa amistad. ¡Eres increíble! 🌟' },
-    { id: 'especial', texto: '🌻 Las flores amarillas son símbolo de alegría y esperanza, igual que tú en mi vida. ¡Feliz 21 de septiembre! ✨' }
-  ],
-  dia_padre: [
-    { id: 'amor', texto: '👨‍👧‍👦 Papá, eres mi héroe y mi ejemplo a seguir. Gracias por todo tu amor y dedicación. ¡Feliz Día del Padre! 💙' },
-    { id: 'gratitud', texto: '👨‍👧‍👦 Gracias papá por cada consejo, cada abrazo y cada momento compartido. Eres el mejor padre del mundo. Te amo! ❤️' },
-    { id: 'especial', texto: '👨‍👧‍👦 En este día tan especial quiero decirte que eres mi mayor inspiración. ¡Feliz día papá! 🎉' }
-  ],
-  dia_madre: [
-    { id: 'amor', texto: '👩‍👧‍👦 Mamá, tu amor incondicional es mi mayor tesoro. Gracias por ser mi guía y mi luz. ¡Feliz Día de la Madre! 💕' },
-    { id: 'gratitud', texto: '👩‍👧‍👦 Gracias mamá por cada sacrificio, cada sonrisa y cada palabra de aliento. Eres mi superhéroe. Te adoro! 🌹' },
-    { id: 'especial', texto: '👩‍👧‍👦 No hay palabras suficientes para expresar lo mucho que te amo mamá. ¡Feliz día! 🌸' }
-  ],
-  navidad: [
-    { id: 'amor', texto: '🎄 Que esta Navidad esté llena de amor, paz y alegría. Gracias por ser parte de mi vida. ¡Feliz Navidad! 🎁' },
-    { id: 'familia', texto: '🎄 En esta época navideña quiero desearte lo mejor junto a tus seres queridos. ¡Felices fiestas! ⭐' },
-    { id: 'especial', texto: '🎄 Que la magia de la Navidad ilumine tu camino y te llene de bendiciones. ¡Feliz Navidad! 🌟' }
-  ],
-  ano_nuevo: [
-    { id: 'amor', texto: '🎊 Que este nuevo año traiga a tu vida mucha felicidad, éxitos y amor. ¡Feliz Año Nuevo! 🎉' },
-    { id: 'deseos', texto: '🎊 Brindo por un año lleno de oportunidades y sueños cumplidos. ¡Feliz 2025! 🥂' },
-    { id: 'especial', texto: '🎊 Que cada día del nuevo año sea una aventura maravillosa. ¡Feliz Año Nuevo! 🎆' }
-  ],
-  default: [
-    { id: 'amor', texto: '❤️ Quiero que sepas lo especial que eres para mí. Este mensaje es para celebrar nuestra conexión única. 💕' },
-    { id: 'amistad', texto: '⭐ Eres una persona increíble y quiero celebrar contigo este día especial. ¡Gracias por existir! 🌟' },
-    { id: 'especial', texto: '✨ En este día tan especial quiero enviarte todo mi cariño y buenos deseos. ¡Eres genial! 🎉' }
-  ]
-};
+const EMO = {amor:'💕', amistad:'🤝', especial:'✨', gratitud:'🙏', familia:'👨‍👩‍👧‍👦', deseos:'🎉', main:'💌'};
+const wc = s => (s||'').trim().split(/\s+/).filter(Boolean).length;
 
-// =============================================
-// ABRIR MODAL DE PERSONALIZACIÓN
-// =============================================
-export function abrirBiwin(festividad) {
-  const fest = festividad;
-  const mensajes = mensajesPorFest[fest.nombreId] || mensajesPorFest.default;
+export function abrirBiwin(fest) {
+  window.festActual = fest;
+  const saved = getls('biwin_draft') || {};
+  const msgs = Object.entries(fest.mensajes||{}).filter(([k])=>k!=='main')
+    .map(([id,txt],i)=>`
+      <label class="msg_card ${i?'':'active'}">
+        <input type="radio" name="msg_tipo" value="${id}" ${i?'' :'checked'}>
+        <div class="msg_card_ico">${EMO[id]||'💬'}</div>
+        <div class="msg_card_txt"><strong>${id}</strong><p class="m_txt">${txt}</p></div>
+      </label>`).join('');
   
-  const contenido = `
-    <form id="wimodal-form-biwin">
-      <div class="wimodal-form-grid">
-        
-        <!-- MENSAJE PREDEFINIDO -->
-        <div class="wimodal-form-group" style="grid-column: 1 / -1;">
-          <label><i class="fa-solid fa-comment-dots"></i> Mensaje Predefinido</label>
-          <div class="mensaje-selector" style="display:grid;gap:1vh;margin-top:1vh;">
-            ${mensajes.map((m, idx) => `
-              <label class="mensaje-option" style="display:flex;align-items:start;gap:1vh;padding:1.5vh;border:2px solid var(--bdr);border-radius:1vh;cursor:pointer;transition:all 0.3s;">
-                <input type="radio" name="mensaje-tipo" value="${m.id}" data-texto="${m.texto}" ${idx === 0 ? 'checked' : ''} 
-                       style="margin-top:0.5vh;">
-                <div style="flex:1;">
-                  <strong style="text-transform:capitalize;color:var(--mco);">${m.id}</strong>
-                  <p style="margin:0.5vh 0 0 0;font-size:0.9rem;color:var(--txs);">${m.texto}</p>
-                </div>
-              </label>
-            `).join('')}
-            <label class="mensaje-option" style="display:flex;align-items:start;gap:1vh;padding:1.5vh;border:2px solid var(--bdr);border-radius:1vh;cursor:pointer;transition:all 0.3s;">
-              <input type="radio" name="mensaje-tipo" value="custom" data-texto="">
-              <div style="flex:1;">
-                <strong style="color:var(--mco);">✏️ Mensaje Personalizado</strong>
-                <textarea id="wi-mensaje-custom" placeholder="Escribe tu mensaje aquí (máx. 500 caracteres)..." 
-                          rows="3" maxlength="500" disabled
-                          style="width:100%;margin-top:0.5vh;padding:1vh;border:2px solid var(--bdr);border-radius:0.8vh;outline:none;resize:vertical;font-family:var(--ff_P);"></textarea>
-                <small class="char-count" style="color:var(--txs);font-size:0.85rem;">0 / 500 caracteres</small>
-              </div>
+  const html = `
+    <div class="biwin_cont">
+      <form id="biwin">
+        <div class="form_gr">
+          <label class="form_lab"><i class="fas fa-comment-dots"></i> Mensaje</label>
+          <div class="msg_grid">
+            ${msgs || ''}
+            <label class="msg_card">
+              <input type="radio" name="msg_tipo" value="custom">
+              <div class="msg_card_ico">✏️</div>
+              <div class="msg_card_txt"><strong>Personalizado</strong></div>
             </label>
           </div>
+          <div id="custom_wrap" style="display:none;margin-top:12px">
+            <div id="msg_custom" contenteditable="true" class="msg_custom" data-ph="Escribe tu mensaje... (máx. 180 palabras)"></div>
+            <small id="cnt">0 / 180 palabras</small>
+          </div>
         </div>
-        
-        <!-- DE -->
-        <div class="wimodal-form-group">
-          <label><i class="fa-solid fa-user"></i> De:</label>
-          <input type="text" id="wi-de" placeholder="Tu nombre" required minlength="2" maxlength="50">
+
+        <div class="form_row">
+          <div class="form_gr"><label class="form_lab"><i class="fas fa-user"></i> De</label>
+            <input id="inp_de" type="text" minlength="2" maxlength="50" placeholder="Tu nombre" value="${saved.de||''}">
+          </div>
+          <div class="form_gr"><label class="form_lab"><i class="fas fa-heart"></i> Para</label>
+            <input id="inp_para" type="text" minlength="2" maxlength="50" placeholder="Nombre especial" value="${saved.para||''}">
+          </div>
         </div>
-        
-        <!-- PARA -->
-        <div class="wimodal-form-group">
-          <label><i class="fa-solid fa-heart"></i> Para:</label>
-          <input type="text" id="wi-para" placeholder="Nombre especial" required minlength="2" maxlength="50">
+
+        <div class="form_gr">
+          <label class="form_lab"><i class="fas fa-link"></i> Link</label>
+          <div class="link_cont">
+            <input id="link_gen" type="text" readonly placeholder="Completa los campos para generar el link...">
+            <button type="button" id="btn_ver" class="btn_ico" disabled><i class="fas fa-external-link-alt"></i></button>
+          </div>
         </div>
-        
-        <!-- AUDIO (opcional) -->
-        <div class="wimodal-form-group" style="grid-column: 1 / -1;">
-          <label><i class="fa-solid fa-music"></i> Audio (URL MP3 - opcional)</label>
-          <input type="url" id="wi-audio" placeholder="https://ejemplo.com/audio.mp3" 
-                 value="${fest.audioUrl || ''}" pattern="https?://.+\.mp3$">
-          <small style="color:var(--txs);font-size:0.85rem;">Deja vacío para usar audio por defecto</small>
+
+        <div class="share_cont">
+          <button type="button" id="btn_ws" class="btn_share btn_ws" disabled><i class="fab fa-whatsapp"></i> WhatsApp</button>
+          <button type="button" id="btn_fb" class="btn_share btn_fb" disabled><i class="fab fa-facebook-f"></i> Facebook</button>
+          <button type="button" id="btn_cp" class="btn_share btn_copy" disabled><i class="fas fa-copy"></i> Copiar</button>
         </div>
-        
-      </div>
-      
-      <!-- BOTONES -->
-      <div style="display:flex;gap:1vh;margin-top:2vh;">
-        <button type="submit" class="wimodal-btn wimodal-btn-primary" style="flex:1;">
-          <i class="fa-solid fa-link"></i> Generar Link
-        </button>
-      </div>
-      
-      <!-- RESULTADO (oculto inicialmente) -->
-      <div id="resultado-link" style="display:none;margin-top:2vh;padding:2vh;background:var(--bg);border-radius:1vh;border:2px solid var(--success);">
-        <label style="display:block;margin-bottom:1vh;font-weight:600;color:var(--success);">
-          <i class="fa-solid fa-check-circle"></i> ¡Link generado!
-        </label>
-        <div style="display:flex;gap:1vh;margin-bottom:1vh;">
-          <input type="text" id="link-generado" readonly 
-                 style="flex:1;padding:1vh;border:2px solid var(--bdr);border-radius:0.8vh;background:#fff;font-family:monospace;font-size:0.85rem;">
-          <button type="button" id="btn-copiar" class="wimodal-btn wimodal-btn-secondary">
-            <i class="fa-solid fa-copy"></i> Copiar
-          </button>
-        </div>
-        <div style="display:flex;gap:1vh;">
-          <button type="button" class="btn-compartir wimodal-btn wimodal-btn-success" data-red="whatsapp" style="flex:1;">
-            <i class="fab fa-whatsapp"></i> WhatsApp
-          </button>
-          <button type="button" class="btn-compartir wimodal-btn wimodal-btn-primary" data-red="facebook" style="flex:1;">
-            <i class="fab fa-facebook"></i> Facebook
-          </button>
-        </div>
-      </div>
-    </form>
+      </form>
+      <div class="biwin_footer">Power by <a href="https://github.com/wilderchris" target="_blank">@Wilder</a></div>
+    </div>
   `;
-  
-  abrirModal({
-    titulo: `${fest.emoji} Personalizar ${fest.nombre}`,
-    contenido,
-    icono: 'fa-edit',
-    botones: []
-  });
-  
-  inicializarEventos(fest);
+
+  abrirModal({ titulo:`${fest.emoji} Personalizar ${fest.nombre}`, contenido:html, icono:'fa-magic', botones:[], ancho:'88vw', alto:'90vh' });
+  bind();
+  restore(saved);
+  update();
 }
 
-// =============================================
-// INICIALIZAR EVENTOS DEL MODAL
-// =============================================
-function inicializarEventos(fest) {
-  
-  // Activar/desactivar textarea custom
-  $('input[name="mensaje-tipo"]').on('change', function() {
-    const isCustom = $(this).val() === 'custom';
-    $('#wi-mensaje-custom').prop('disabled', !isCustom);
-    if (isCustom) $('#wi-mensaje-custom').focus();
+function bind(){
+  $(document).off('change.biwin click.biwin keyup.biwin input.biwin');
+
+  $(document).on('change.biwin','input[name="msg_tipo"]',e=>{
+    $('.msg_card').removeClass('active'); $(e.target).closest('.msg_card').addClass('active');
+    const isC = e.target.value==='custom';
+    $('#custom_wrap').toggle(isC);
+    if (isC) $('#msg_custom').focus(); else $('#msg_custom').text(''), $('#cnt').text('0 / 180 palabras');
+    update();
   });
-  
-  // Contador de caracteres
-  $('#wi-mensaje-custom').on('input', function() {
-    const len = $(this).val().length;
-    $(this).siblings('.char-count').text(`${len} / 500 caracteres`);
+
+  $(document).on('input.biwin','#msg_custom',e=>{
+    let t = $(e.currentTarget).text().trim();
+    const words = t.split(/\s+/).filter(Boolean);
+    if (words.length>180){ t = words.slice(0,180).join(' '); $(e.currentTarget).text(t); placeCaretEnd(e.currentTarget); }
+    $('#cnt').text(`${wc(t)} / 180 palabras`);
+    update();
   });
-  
-  // Estilo activo en opciones
-  $('.mensaje-option').on('click', function() {
-    $('.mensaje-option').css('border-color', 'var(--bdr)');
-    $(this).css('border-color', 'var(--mco)');
+
+  $(document).on('keyup.biwin input.biwin','#inp_de,#inp_para',update);
+
+  $(document).on('click.biwin','#btn_ver',()=>{
+    const link = $('#link_gen').val(); if (!ok(link)) return;
+    window.open(link,'_blank'); Mensaje('Abriendo...');
   });
-  
-  // Submit del formulario
-  $('#wimodal-form-biwin').on('submit', function(e) {
-    e.preventDefault();
-    
-    const de = $('#wi-de').val().trim();
-    const para = $('#wi-para').val().trim();
-    const tipoMensaje = $('input[name="mensaje-tipo"]:checked');
-    const mensajeTipo = tipoMensaje.val();
-    const mensajeTexto = mensajeTipo === 'custom' ? $('#wi-mensaje-custom').val().trim() : tipoMensaje;
-    const audioUrl = $('#wi-audio').val().trim();
-    
-    // Validaciones
-    if (de.length < 2) return Notificacion('El nombre "De" debe tener al menos 2 caracteres', 'error');
-    if (para.length < 2) return Notificacion('El nombre "Para" debe tener al menos 2 caracteres', 'error');
-    if (mensajeTipo === 'custom' && mensajeTexto.length < 10) return Notificacion('El mensaje personalizado debe tener al menos 10 caracteres', 'error');
-    
-    // Generar URL
-    const link = generarLink(fest, de, para, mensajeTexto, audioUrl);
-    
-    // Mostrar resultado
-    $('#link-generado').val(link);
-    $('#resultado-link').slideDown(300);
-    
-    Mensaje('¡Link generado exitosamente! 🎉');
+
+  $(document).on('click.biwin','#btn_ws',()=>{
+    const link = $('#link_gen').val(); if (!ok(link)) return;
+    const f = window.festActual||{}, txt = `${f.emoji||''} ${f.nombre||'Mensaje especial'}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(txt+'\n\n'+link)}`,'_blank');
   });
-  
-  // Copiar al portapapeles
-  $(document).on('click', '#btn-copiar', function() {
-    const link = $('#link-generado').val();
-    navigator.clipboard.writeText(link).then(() => {
-      Mensaje('¡Link copiado al portapapeles! 📋');
-      $(this).html('<i class="fa-solid fa-check"></i> Copiado').prop('disabled', true);
-      setTimeout(() => {
-        $(this).html('<i class="fa-solid fa-copy"></i> Copiar').prop('disabled', false);
-      }, 2000);
-    }).catch(() => {
-      Notificacion('Error al copiar', 'error');
-    });
+
+  $(document).on('click.biwin','#btn_fb',()=>{
+    const link = $('#link_gen').val(); if (!ok(link)) return;
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`,'_blank');
   });
-  
-  // Compartir en redes
-  $(document).on('click', '.btn-compartir', function() {
-    const red = $(this).data('red');
-    const link = $('#link-generado').val();
-    const texto = `${fest.emoji} ¡Te envío un mensaje especial! ${fest.nombre}`;
-    
-    let url;
-    if (red === 'whatsapp') {
-      url = `https://wa.me/?text=${encodeURIComponent(texto + '\n' + link)}`;
-    } else if (red === 'facebook') {
-      url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`;
-    }
-    
-    window.open(url, '_blank', 'width=600,height=400');
+
+  $(document).on('click.biwin','#btn_cp',()=>{
+    const link = $('#link_gen').val(); if (!ok(link)) return;
+    navigator.clipboard.writeText(link).then(()=>Mensaje('¡Copiado!')).catch(()=>Notificacion('No se pudo copiar','error'));
   });
 }
 
-// =============================================
-// GENERAR LINK PERSONALIZADO
-// =============================================
-function generarLink(fest, de, para, mensaje, audio) {
-  const base = window.location.origin + window.location.pathname;
-  const params = new URLSearchParams();
-  
-  params.set('fest', fest.nombreId);
-  params.set('de', de);
-  params.set('para', para);
-  
-  // Si es mensaje predefinido, solo pasar el ID
-  if (['amor', 'amistad', 'especial', 'gratitud', 'familia', 'deseos'].includes(mensaje)) {
-    params.set('msg', mensaje);
-  } else {
-    // Mensaje custom completo
-    params.set('msg', 'custom');
-    params.set('txt', mensaje);
+function update(){
+  const de = $('#inp_de').val()?.trim()||'', para = $('#inp_para').val()?.trim()||'';
+  const tipo = $('input[name="msg_tipo"]:checked').val()||'';
+  const isC = tipo==='custom', txt = isC ? $('#msg_custom').text().trim() : tipo;
+  const valid = de.length>=2 && para.length>=2 && (!isC || wc(txt)>=3);
+  if (!valid){
+    $('#link_gen').val('Completa los campos para generar el link...'); toggleBtns(true); return;
   }
-  
-  if (audio) params.set('audio', audio);
-  
-  return `${base}?${params.toString()}`;
+  const fest = window.festActual||{}, base = location.origin+location.pathname, alias = fest.alias||fest.nombreId||'';
+  const p = new URLSearchParams({de,para,msg:isC?'custom':txt}); if (isC) p.set('txt', txt);
+  const link = `${base}?${alias}&${p.toString()}`;
+  $('#link_gen').val(link); toggleBtns(false);
+  savels('biwin_draft',{de,para,msgTipo:tipo,msgTexto:isC?txt:'',audioUrl:''},168);
 }
 
-// =============================================
-// EVENTO CLICK EN BOTONES .biwin
-// =============================================
-$(document).on('click', '.btn_pers', function() {
-  const $card = $(this).closest('.fest_card');
-  const festId = $card.data('id');
-  const festNombreId = $card.data('fest');
-  
-  // Si tenemos el ID de Firestore, buscar en cache
-  if (window.festividadesGlobal) {
-    const fest = window.festividadesGlobal.find(f => f.id === festId || f.nombreId === festNombreId);
-    if (fest) {
-      abrirBiwin(fest);
-    } else {
-      Notificacion('Festividad no encontrada', 'error');
-    }
-  } else {
-    // Fallback: crear objeto mínimo desde el DOM
-    const fest = {
-      nombreId: festNombreId,
-      nombre: $card.find('.card_tit').text(),
-      emoji: $card.find('.card_ico').text(),
-      audioUrl: ''
-    };
-    abrirBiwin(fest);
-  }
+function toggleBtns(dis){ $('#btn_ver,#btn_ws,#btn_fb,#btn_cp').prop('disabled',dis); }
+function ok(link){ if (!link || link.includes('Completa')){ Notificacion('Completa los campos','warning'); return false;} return true; }
+function placeCaretEnd(el){ const r=document.createRange(); r.selectNodeContents(el); r.collapse(false); const s=window.getSelection(); s.removeAllRanges(); s.addRange(r); }
+function restore(s){ if(s.de)$('#inp_de').val(s.de); if(s.para)$('#inp_para').val(s.para); if(s.msgTipo==='custom'&&s.msgTexto){ $('input[name="msg_tipo"][value="custom"]').prop('checked',true).trigger('change'); $('#msg_custom').text(s.msgTexto); $('#cnt').text(`${wc(s.msgTexto)} / 180 palabras`);} }
+
+// Abrir desde tarjetas (compacto)
+$(document).on('click','.btn_pers',function(){
+  const $c=$(this).closest('.fest_card'); const id=$c.data('id'), nid=$c.data('fest');
+  const f = (window.festividadesGlobal||[]).find(x=>x.id===id||x.nombreId===nid) || {
+    nombreId:nid, alias:nid, nombre:$c.find('.card_tit').text(), emoji:$c.find('.card_ico').text(),
+    fechaTexto:$c.find('.card_date').text(), mensajes:{}, musica:{}
+  };
+  abrirBiwin(f);
 });
