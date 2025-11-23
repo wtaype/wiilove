@@ -9,7 +9,7 @@ let lanzamiento = 2024;
 let autor = '@wilder.taype';
 let link = 'https://wtaype.github.io/';
 let version = 'v13'; 
-/** ACTUALIZACION TAG version dia hora   amor grr[START]  
+/** ACTUALIZACION TAG version excelente [START]  
 
 git add . ; git commit -m "Actualizacion Principal v13.11.39"
 git push origin main
